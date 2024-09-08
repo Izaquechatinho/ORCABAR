@@ -1,1 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora de Estrutura Metálica</title>
+</head>
+<body>
+    <h1>Calculadora de Estrutura Metálica</h1>
 
+    <form id="formulario">
+        <h2>Dimensões do Barracão</h2>
+        <label for="largura">Largura (em milímetros):</label>
+        <input type="number" id="largura" required><br><br>
+
+        <label for="comprimento">Comprimento (em milímetros):</label>
+        <input type="number" id="comprimento" required><br><br>
+
+        <label for="distanciaTesouras">Distância entre tesouras (em milímetros):</label>
+        <input type="number" id="distanciaTesouras" required><br><br>
+
+        <h2>Materiais das Tesouras</h2>
+        <label for="materialBanzo">Nome do material para o banzo:</label>
+        <select id="materialBanzo">
+            <option value="U">Perfil U (chapa dobrada)</option>
+            <option value="W">Perfil W</option>
+            <option value="L">Cantoneira L</option>
+        </select><br><br>
+
+        <label for="descricaoBanzo">Descrição do banzo:</label>
+        <input type="text" id="descricaoBanzo"><br><br>
+
+        <label for="materialTerças">Nome do material para as terças:</label>
+        <input type="text" id="materialTerças" required><br><br>
+
+        <label for="materialMontantes">Nome do material para os montantes:</label>
+        <input type="text" id="materialMontantes" required><br><br>
+
+        <button type="button" onclick="calcularEstrutura()">Calcular Estrutura</button><br><br>
+    </form>
+
+    <h2>Resultado:</h2>
+    <ul id="listaResultados"></ul>
+<title>Tesoura Metálica Treliçada</title>
+    <style>
+        pre {
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre;
+            line-height: 1;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <pre>
+                                   __                                    
+                         __---""""/||\""""---__                          
+                __---"""/  |     / || \     |   \"""---__                
+ _       _--"""/  |    /   |    /  ||  \    |    \    |  \"""--_       _ 
+|_|___--/ |   /   |   /    |   /   ||   \   |     \   |   \   | \--___|_|
+|_|\ | /  |  /    |  /     |  /    ||    \  |      \  |    \  |  \ | /|_|
+|_|_\|/___|_/_____|_/______|_/_____||_____\_|_______\_|_____\_|___\|/_|_|
+|x|                                                                   |x|
+    </pre>
+</body>
+    <h2>Calculadora de Peso de Perfis Metálicos</h2>
+    <form id="formularioPeso">
+        <label for="tipoPerfil">Tipo de Perfil:</label>
+        <select id="tipoPerfil">
+            <option value="U">Perfil U</option>
+            <option value="W">Perfil W</option>
+            <option value="L">Cantoneira L</option>
+        </select><br><br>
+
+        <label for="espessura">Espessura (em mm):</label>
+        <input type="number" id="espessura" required><br><br>
+
+        <label for="larguraPerfil">1 Aba do Perfil  (em mm):</label>
+        <input type="number" id="larguraPerfil" required><br><br>
+     
+        <label for="meiodoPerfil">Meio do Perfil (em mm):</label>
+        <input type="number" id="meiodoPerfil" required><br><br>
+
+        <label for="alturaPerfil">2 Aba do Perfil (em mm):</label>
+        <input type="number" id="alturaPerfil" required><br><br>
+
+        <label for="comprimentoPerfil">Comprimento do Perfil (em metros):</label>
+        <input type="number" id="comprimentoPerfil" required><br><br>
+
+        <button type="button" onclick="calcularPesoPerfil()">Calcular Peso do Perfil</button><br><br>
+    </form>
+
+    <h2>Resultado do Peso:</h2>
+    <ul id="resultadoPeso"></ul>
+
+    <script>
+        function calcularEstrutura() {
+            const largura = parseFloat(document.getElementById('largura').value) / 1000; // converter para metros
+            const comprimento = parseFloat(document.getElementById('comprimento').value) / 1000; // converter para metros
+            const distanciaTesouras = parseFloat(document.getElementById('distanciaTesouras').value) / 1000; // converter para metros
+            const materialBanzo = document.getElementById('materialBanzo').value;
+            const materialTerças = document.getElementById('materialTerças').value;
+            const materialMontantes = document.getElementById('materialMontantes').value;
+            const espacoTerças = 1.25; // Espaçamento entre terças em metros (1250 mm)
+
+            // Calcular metragem quadrada do barracão
+            const metragemBarracao = largura * comprimento;
+
+            // Calcular quantidade de tesouras (considerando uma adicional)
+            const quantidadeTesouras = Math.ceil(comprimento / distanciaTesouras) + 1;
+
+            // Calcular quantidade de vãos das terças (quantidade de tesouras menos uma)
+            const quantidadeVaos = quantidadeTesouras - 1;
+
+            // Calcular quantidade de terças (baseado na largura)
+            const quantidadeTerças = Math.ceil(largura / espacoTerças);
+
+            // Calcular metragem total das terças (baseada na quantidade de vãos)
+            const metragemTerças = comprimento * quantidadeTerças * quantidadeVaos; // correção sugerida por você
+
+            // Calcular comprimento do banzo e montantes para cada tesoura
+            const comprimentoBanzo = Math.ceil(2.3 * largura / 2) ;
+            const comprimentoMontantes = Math.ceil (4.5 * largura / 2);
+
+            // Calcular o total de material para todos os banzos e montantes
+            const totalBanzo = comprimentoBanzo * quantidadeTesouras;
+            const totalMontantes = comprimentoMontantes * quantidadeTesouras;
+
+            // Exibir resultados na lista
+            const listaResultados = document.getElementById('listaResultados');
+            listaResultados.innerHTML = `
+                <li>Metragem do Barracão: ${metragemBarracao.toFixed(2)} m²</li>
+                <li>Quantidade de Tesouras: ${quantidadeTesouras}</li>
+                <li>Quantidade de Vãos das Terças: ${quantidadeVaos}</li>
+                <li>Quantidade de Terças: ${quantidadeTerças}</li>
+                <li>Metragem Total das Terças: ${metragemTerças.toFixed(2)} metros (${materialTerças})</li>
+                <li>Material para Banzos (${materialBanzo}): ${totalBanzo.toFixed(2)} metros</li>
+                <li>Material para Montantes (${materialMontantes}): ${totalMontantes.toFixed(2)} metros</li>
+            `;
+        }
+
+        function calcularPesoPerfil() {
+            const tipoPerfil = document.getElementById('tipoPerfil').value;
+            const espessura = parseFloat(document.getElementById('espessura').value) / 1000; // converter para metros
+            const larguraPerfil = parseFloat(document.getElementById('larguraPerfil').value) / 1000; // converter para metros
+            const meiodoPerfil = parseFloat(document.getElementById('meiodoPerfil').value) / 1000; // converter para metros
+            const alturaPerfil = parseFloat(document.getElementById('alturaPerfil').value) / 1000; // converter para metros
+            const comprimentoPerfil = parseFloat(document.getElementById('comprimentoPerfil').value); // em metros
+
+            let areaSecaoTransversal;
+
+            if (tipoPerfil === "U") {
+                // Área da seção transversal para perfil U
+                areaSecaoTransversal = (meiodoPerfil + larguraPerfil + alturaPerfil) * espessura;
+            } else if (tipoPerfil === "W") {
+                // Área da seção transversal para perfil W
+                areaSecaoTransversal = (meiodoPerfil + larguraPerfil + alturaPerfil) * espessura;
+            } else if (tipoPerfil === "L") {
+                // Área da seção transversal para cantoneira L
+                areaSecaoTransversal = (meiodoPerfil + larguraPerfil + alturaPerfil) * espessura;
+            }
+
+            // Densidade do aço em kg/m³
+            const densidadeAco = 7850;
+
+            // Calcular peso do perfil
+            const pesoPerfil = areaSecaoTransversal * comprimentoPerfil * densidadeAco;
+
+            // Exibir resultado
+            const resultadoPeso = document.getElementById('resultadoPeso');
+            resultadoPeso.innerHTML = `<li>Peso do Perfil (${tipoPerfil}): ${pesoPerfil.toFixed(2)} kg</li>`;
+        }
+    </script>
+</body>
+</html>
